@@ -1,0 +1,625 @@
+1. read describe titanic
+import pandas as pd
+
+file_path = '/content/Titanic.csv'
+titanic_data = pd.read_csv(file_path)
+
+selected_data = titanic_data.loc[0:4,['Name','Age']]
+print("selected data:")
+print(selected_data)
+
+
+sorted_data = titanic_data.sort_values(by='Fare',ascending=True)
+print("sorted data:")
+print(sorted_data)
+
+
+data_description = titanic_data.describe(include='all')
+print(" data description:")
+print(data_description)
+
+
+data_types = titanic_data.dtypes
+print(" datatypes:")
+print(data_types)
+
+2. std mean mode telecom
+import pandas as pd
+
+file_path = '/content/Telecom Churn.csv'
+telecom_data = pd.read_csv(file_path)
+
+numeric_data = telecom_data.select_dtypes(include=['int64','float64'])
+
+#perform numerical operations
+print("Minimum values in the dataset: \n", numeric_data.min(), "\n")
+print("Maximum values in the dataset: \n", numeric_data.max(), "\n")
+print("Range of the dataset: \n", numeric_data.max() - numeric_data.min(), "\n")
+print("mean value of the dataset : \n", numeric_data.mean(), "\n")
+print("Standard deviation of the dataset: \n", numeric_data.std(), "\n")
+print("Vairance of the dataset: \n", numeric_data.var(), "\n")
+
+print("25th percentile: \n", numeric_data.quantile(0.25), "\n")
+print("50th percentile: \n", numeric_data.quantile(0.50), "\n")
+print("75th percentile: \n", numeric_data.quantile(0.75), "\n")
+
+3.std var quantile hist house
+import pandas as pd
+import matplotlib.pyplot as plt
+file_path='/content/House Data.csv'
+house_data=pd.read_csv(file_path)
+
+numeric_data=house_data.select_dtypes(include=['int64','float64'])
+print("standard deviation:\n",numeric_data.std())
+print("variance:\n",numeric_data.var())
+print("25th percentile of the dataset: \n", numeric_data.quantile(0.25), "\n")
+print("50th percentile of the dataset: \n",numeric_data.quantile(0.50), "\n")
+print("75th percentile of the dataset: \n", numeric_data.quantile(0.75), "\n")
+
+numeric_data.hist(figsize=(12,10), bins = 30,edgecolor = 'black')
+plt.suptitle('Feature distributions')
+plt.tight_layout()
+plt.show()
+
+4.entropy root node
+import pandas as pd
+import numpy as np
+
+file_path = '/content/Lipstick.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset:")
+print(df.head())
+
+df['Age'] = df['Age'].map({'<21': 0, '21-35': 1, '>35': 2})
+df['Income'] = df['Income'].map({'Low': 0, 'Medium': 1, 'High': 2})
+df['Gender'] = df['Gender'].map({'Male': 0, 'Female': 1})
+df['Ms'] = df['Ms'].map({'Single': 0, 'Married': 1})
+df['Buys'] = df['Buys'].map({'No': 0, 'Yes': 1})
+
+print("\nEncoded Dataset:")
+print(df.head())
+
+def entropy(data):
+total = len(data)
+pos_count = np.sum(data)
+neg_count = total - pos_count
+
+if pos_count == 0 or neg_count == 0:
+return 0
+
+p_pos = pos_count / total
+p_neg = neg_count / total
+
+return -p_pos * np.log2(p_pos) - p_neg * np.log2(p_neg)
+
+def information_gain(data, feature, target):
+unique_values = data[feature].unique()
+total_entropy = entropy(data[target])
+
+weighted_entropy = 0
+for value in unique_values:
+subset = data[data[feature] == value]
+weighted_entropy += (len(subset) / len(data)) * entropy(subset[target])
+
+return total_entropy - weighted_entropy
+
+features = ['Age', 'Income', 'Gender', 'Ms']
+for feature in features:
+gain = information_gain(df, feature, 'Buys')
+print(f"Information Gain for '{feature}': {gain}")
+
+best_feature = None
+max_gain = -1
+
+for feature in features:
+gain = information_gain(df, feature, 'Buys')
+if gain > max_gain:
+max_gain = gain
+best_feature = feature
+
+print(f"\nRoot Node of the Decision Tree: {best_feature} with Information Gain: {max_gain}")
+
+5.train model
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+
+file_path = '/content/Lipstick.csv'
+df = pd.read_csv(file_path)
+
+# Display the dataset
+print("Dataset:")
+print(df.head())
+
+# Encode categorical features into numerical values
+df['Age'] = df['Age'].map({'<21': 0, '21-35': 1, '>35': 2}) # Encoding for Age
+df['Income'] = df['Income'].map({'Low': 0, 'Medium': 1, 'High': 2}) # Encoding for Income
+df['Gender'] = df['Gender'].map({'Male': 0, 'Female': 1}) # Encoding for Gender
+df['Ms'] = df['Ms'].map({'Single': 0, 'Married': 1}) # Encoding for Marital Status
+df['Buys'] = df['Buys'].map({'No': 0, 'Yes': 1}) # Encoding for Buys (target variable)
+
+# Features (input columns) and target (output column)
+X = df[['Age', 'Income', 'Gender', 'Ms']] # Features
+y = df['Buys'] # Target
+
+# Train the decision tree model
+clf = DecisionTreeClassifier()
+clf.fit(X, y)
+
+# Define the test data: [Age < 21, Income = Low, Gender = Female, Marital Status = Married]
+test_data = pd.DataFrame([[0, 0, 1, 1]], columns=['Age', 'Income', 'Gender', 'Ms'])
+
+# Make a prediction using the trained model
+prediction = clf.predict(test_data)
+
+# Display the result
+if prediction[0] == 1:
+print("\nPrediction: The customer will buy the lipstick (Yes).")
+else:
+print("\nPrediction: The customer will not buy the lipstick (No).")
+
+9. kmeans perform
+import numpy as np
+
+# Given points
+points = {
+'P1': np.array([0.1, 0.6]),
+'P2': np.array([0.15, 0.71]),
+'P3': np.array([0.08, 0.9]),
+'P4': np.array([0.16, 0.85]),
+'P5': np.array([0.2, 0.3]),
+'P6': np.array([0.25, 0.5]),
+'P7': np.array([0.24, 0.1]),
+'P8': np.array([0.3, 0.2])
+}
+
+# Initial centroids
+m1 = np.array([0.1, 0.6]) # Cluster 1 centroid
+m2 = np.array([0.3, 0.2]) # Cluster 2 centroid
+
+# Function to calculate Euclidean distance
+def euclidean_distance(p1, p2):
+return np.sqrt(np.sum((p1 - p2) ** 2))
+
+# Perform K-means clustering
+iterations = 0
+previous_m1, previous_m2 = m1.copy(), m2.copy()
+clusters = {1: [], 2: []}
+
+# Step 1: Assign points to the nearest centroid
+while True:
+clusters = {1: [], 2: []}
+for point_name, point in points.items():
+dist_to_m1 = euclidean_distance(point, m1)
+dist_to_m2 = euclidean_distance(point, m2)
+
+# Assign point to nearest centroid
+if dist_to_m1 < dist_to_m2:
+clusters[1].append(point_name)
+else:
+clusters[2].append(point_name)
+
+# Step 2: Update centroids
+m1 = np.mean([points[p] for p in clusters[1]], axis=0) if clusters[1] else m1
+m2 = np.mean([points[p] for p in clusters[2]], axis=0) if clusters[2] else m2
+
+# Check if centroids have changed
+iterations += 1
+if np.allclose(m1, previous_m1) and np.allclose(m2, previous_m2):
+break
+
+previous_m1, previous_m2 = m1.copy(), m2.copy()
+
+# Output results
+print(f"Cluster 1 points: {', '.join(clusters[1])}")
+print(f"Cluster 2 points: {', '.join(clusters[2])}")
+print(f"Updated centroid m1: {m1}")
+print(f"Updated centroid m2: {m2}")
+print(f"Number of iterations: {iterations}")
+
+# Part 1: Which cluster does P6 belong to?
+P6 = np.array([0.25, 0.5])
+dist_to_m1 = euclidean_distance(P6, m1)
+dist_to_m2 = euclidean_distance(P6, m2)
+cluster_P6 = 1 if dist_to_m1 < dist_to_m2 else 2
+print(f"P6 belongs to Cluster {cluster_P6}")
+
+# Part 2: Population of cluster around m2
+population_cluster_around_m2 = len(clusters[2])
+print(f"Population of cluster around m2: {population_cluster_around_m2}")
+
+11.feature hist iris
+import pandas as pd
+import matplotlib.pyplot as plt
+
+file_path = '/content/IRIS.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Head:")
+print(df.head())
+
+print("\nCreating box plots for each feature...")
+for column in df.columns[:-1]: # Exclude the target column (e.g., Species)
+plt.figure(figsize=(8, 6))
+plt.boxplot(df[column], patch_artist=True, notch=True, boxprops=dict(facecolor='skyblue', color='black'))
+plt.title(f'Box Plot of {column}')
+plt.xlabel(column)
+plt.ylabel('Values')
+plt.grid(axis='y')
+plt.show()
+
+print("\nOutlier Analysis:")
+for column in df.columns[:-1]: # Exclude the target column
+Q1 = df[column].quantile(0.25) # First quartile
+Q3 = df[column].quantile(0.75) # Third quartile
+IQR = Q3 - Q1 # Interquartile range
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+outliers = df[(df[column] < lower_bound) | (df[column] > upper_bound)]
+print(f"{column}:")
+print(f" Lower Bound: {lower_bound}, Upper Bound: {upper_bound}")
+print(f" Number of Outliers: {len(outliers)}")
+if len(outliers) > 0:
+print(f" Outlier Values:\n{outliers[column].values}")
+print()
+
+12.box plot outlier 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+file_path = '/content/IRIS.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Head:")
+print(df.head())
+
+print("\nCreating box plots for each feature...")
+for column in df.columns[:-1]: # Exclude the target column (e.g., Species)
+plt.figure(figsize=(8, 6))
+plt.boxplot(df[column], patch_artist=True, notch=True, boxprops=dict(facecolor='skyblue', color='black'))
+plt.title(f'Box Plot of {column}')
+plt.xlabel(column)
+plt.ylabel('Values')
+plt.grid(axis='y')
+plt.show()
+
+print("\nOutlier Analysis:")
+for column in df.columns[:-1]: # Exclude the target column
+Q1 = df[column].quantile(0.25) # First quartile
+Q3 = df[column].quantile(0.75) # Third quartile
+IQR = Q3 - Q1 # Interquartile range
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+outliers = df[(df[column] < lower_bound) | (df[column] > upper_bound)]
+print(f"{column}:")
+print(f" Lower Bound: {lower_bound}, Upper Bound: {upper_bound}")
+print(f" Number of Outliers: {len(outliers)}")
+if len(outliers) > 0:
+print(f" Outlier Values:\n{outliers[column].values}")
+print()
+
+13.first dose
+import pandas as pd
+
+file_path = '/content/Covid Vaccine Statewise.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Description:")
+print(df.describe(include='all'))
+print("\nDataset Info:")
+print(df.info())
+
+if 'State' in df.columns and 'First Dose Administered' in df.columns:
+first_dose_statewise = df.groupby('State')['First Dose Administered'].sum()
+print("\nNumber of persons state-wise vaccinated for the first dose:")
+print(first_dose_statewise)
+else:
+print("\nColumns 'State' or 'First Dose Administered' not found in the dataset.")
+
+if 'State' in df.columns and 'Second Dose Administered' in df.columns:
+second_dose_statewise = df.groupby('State')['Second Dose Administered'].sum()
+print("\nNumber of persons state-wise vaccinated for the second dose:")
+print(second_dose_statewise)
+else:
+print("\nColumns 'State' or 'Second Dose Administered' not found in the dataset.")
+
+14.males females
+import pandas as pd
+
+file_path = '/content/Covid Vaccine Statewise.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Description:")
+print(df.describe(include='all'))
+
+if 'Male(Individuals Vaccinated)' in df.columns:
+total_males_vaccinated = df['Male(Individuals Vaccinated)'].dropna().sum()
+print(f"\nTotal number of males vaccinated: {total_males_vaccinated}")
+else:
+print("\nColumn 'Male(Individuals Vaccinated)' not found in the dataset.")
+
+if 'Female(Individuals Vaccinated)' in df.columns:
+total_females_vaccinated = df['Female(Individuals Vaccinated)'].dropna().sum()
+print(f"\nTotal number of females vaccinated: {total_females_vaccinated}")
+else:
+print("\nColumn 'Female(Individuals Vaccinated)' not found in the dataset.")
+
+15. all patterns
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+file_path = '/content/Titanic.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Preview:")
+print(df.head())
+sns.set_theme(style="whitegrid")
+
+# Example 1: Survival distribution
+plt.figure(figsize=(6, 4))
+sns.countplot(data=df, x='Survived', hue='Survived', palette='pastel', dodge=False)
+plt.title('Survival Count')
+plt.xlabel('Survived (0 = No, 1 = Yes)')
+plt.ylabel('Count')
+plt.legend(title="Survived")
+plt.show()
+
+# Example 2: Survival by gender
+plt.figure(figsize=(8, 5))
+sns.countplot(data=df, x='Survived', hue='Sex', palette='muted')
+plt.title('Survival by Gender')
+plt.xlabel('Survived (0 = No, 1 = Yes)')
+plt.ylabel('Count')
+plt.legend(title="Gender")
+plt.show()
+
+# Example 3: Distribution of fare prices
+plt.figure(figsize=(8, 5))
+sns.histplot(df['Fare'], kde=True, bins=30, color='blue')
+plt.title('Distribution of Fare Prices')
+plt.xlabel('Fare')
+plt.ylabel('Frequency')
+plt.show()
+
+# Example 4: Age distribution by survival status
+plt.figure(figsize=(8, 5))
+sns.boxplot(data=df, x='Survived', y='Age', palette='coolwarm', hue='Survived', dodge=False)
+plt.title('Age Distribution by Survival')
+plt.xlabel('Survived (0 = No, 1 = Yes)')
+plt.ylabel('Age')
+plt.legend(title="Survived")
+plt.show()
+
+# Example 5: Survival by passenger class
+plt.figure(figsize=(8, 5))
+sns.countplot(data=df, x='Pclass', hue='Survived', palette='Set2')
+plt.title('Survival by Passenger Class')
+plt.xlabel('Passenger Class (1 = 1st, 2 = 2nd, 3 = 3rd)')
+plt.ylabel('Count')
+plt.legend(title="Survived")
+plt.show()
+
+# Example 6: Correlation heatmap of numerical variables
+# Select only numeric columns for the heatmap
+numeric_cols = df.select_dtypes(include=['float64', 'int64'])
+plt.figure(figsize=(10, 8))
+sns.heatmap(numeric_cols.corr(), annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+16.inbuilt seaborn
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = sns.load_dataset('titanic')
+
+if 'fare' in df.columns:
+plt.figure(figsize=(10, 6))
+
+sns.histplot(data=df, x='fare', kde=True, bins=30, color='skyblue', edgecolor='black')
+
+plt.title('Distribution of Ticket Fare on Titanic (with Trend Line)', fontsize=16)
+plt.xlabel('Fare', fontsize=14)
+plt.ylabel('Frequency', fontsize=14)
+plt.grid(axis='y', alpha=0.75)
+plt.show()
+else:
+print("'fare' column not found in the dataset.")
+
+17.confusion matrix
+
+TP = 1
+FP = 1
+FN = 8
+TN = 90
+total = TP + FP + FN + TN
+accuracy = (TP + TN) / total
+
+error_rate = (FP + FN) / total
+
+precision = TP / (TP + FP) if (TP + FP) != 0 else 0
+
+recall = TP / (TP + FN) if (TP + FN) != 0 else 0
+
+print(f"Accuracy: {accuracy:.2f}")
+print(f"Error Rate: {error_rate:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+
+18.categorical age
+import pandas as pd
+
+file_path = '/content/House Data.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Preview:")
+print(df.head())
+
+categorical_variable = 'Age_Group'
+quantitative_variable = 'Income'
+
+if categorical_variable in df.columns and quantitative_variable in df.columns:
+grouped_stats = df.groupby(categorical_variable)[quantitative_variable].agg(['mean', 'median', 'min', 'max', 'std'])
+
+print(f"\nSummary statistics of {quantitative_variable} grouped by {categorical_variable}:")
+print(grouped_stats)
+else:
+print(f"Error: Column names {categorical_variable} or {quantitative_variable} not found in the dataset.")
+
+19. iris
+import pandas as pd
+
+file_path = '/content/IRIS.csv'
+df = pd.read_csv(file_path)
+
+species_list = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']
+
+for species in species_list:
+print(f"Statistics for {species}:")
+species_data = df[df['species'] == species]
+print(species_data.describe())
+print("\n")
+
+20.random cluster
+import numpy as np
+import pandas as pd
+import random
+
+file_path = '/content/IRIS.csv'
+df = pd.read_csv(file_path)
+
+# Extract features
+X = df.iloc[:, :-1].values # First four columns as features
+
+K = 3
+iterations = 10
+
+# Step 1: Randomly initialize cluster centers from the data points
+np.random.seed(42)
+initial_centroids = X[random.sample(range(len(X)), K)]
+
+# Function to compute Euclidean distance
+def euclidean_distance(a, b):
+return np.sqrt(np.sum((a - b) ** 2))
+
+# Implement the K-means algorithm
+for iteration in range(iterations):
+# Assign each point to the nearest centroid
+clusters = {i: [] for i in range(K)} # Create empty lists for each cluster
+for point in X:
+distances = [euclidean_distance(point, centroid) for centroid in initial_centroids]
+cluster_index = np.argmin(distances) # Find the nearest centroid
+clusters[cluster_index].append(point)
+
+# Update centroids to be the mean of the points in each cluster
+new_centroids = []
+for i in range(K):
+new_centroids.append(np.mean(clusters[i], axis=0) if clusters[i] else initial_centroids[i])
+
+# Check for convergence (if centroids do not change)
+new_centroids = np.array(new_centroids)
+if np.allclose(initial_centroids, new_centroids):
+break
+initial_centroids = new_centroids
+
+print("Final Cluster Means (Centroids):")
+for i, centroid in enumerate(initial_centroids):
+print(f"Cluster {i+1}: {centroid}")
+
+21.info gain age
+import pandas as pd
+import numpy as np
+
+# Sample dataset based on the provided table
+file_path = '/content/Age Table.xlsx'
+
+# Read the Excel file into a DataFrame
+df = pd.read_excel(file_path)
+
+# Function to calculate entropy
+def entropy(class_column):
+# Calculate the probabilities of each class
+prob = class_column.value_counts(normalize=True)
+# Calculate the entropy
+return -np.sum(prob * np.log2(prob))
+
+# Step 1: Calculate the entropy of the whole dataset
+total_entropy = entropy(df['Class'])
+print(f"Total Entropy of the dataset: {total_entropy}")
+
+# Step 2: Split the data based on the 'Age' column
+age_groups = df.groupby('Age')
+
+# Step 3: Calculate the entropy for each subset and their weighted average entropy
+weighted_entropy = 0
+for age, group in age_groups:
+group_entropy = entropy(group['Class'])
+weight = len(group) / len(df) # Weight is the proportion of the group
+weighted_entropy += weight * group_entropy
+print(f"Entropy for Age = {age}: {group_entropy}")
+
+# Step 4: Calculate the Information Gain
+information_gain = total_entropy - weighted_entropy
+print(f"\nInformation Gain for 'Age': {information_gain}")
+
+24. dataset data clean
+import pandas as pd
+
+# Load dataset
+file_path = '/content/Lipstick.csv'
+df = pd.read_csv(file_path)
+
+# Count unique values and data types
+print("\nUnique values:\n", df.nunique())
+print("\nData types:\n", df.dtypes)
+
+# Convert floats with whole numbers to int, ints to str
+df.update(df.select_dtypes('float64').apply(lambda x: x.astype('int64') if (x % 1).eq(0).all() else x))
+df.update(df.select_dtypes('int64').astype('str'))
+
+# Handle missing values: Fill numerical with mean, categorical with mode
+df.fillna({col: df[col].mean() for col in df.select_dtypes(['float64', 'int64'])}, inplace=True)
+df.fillna({col: df[col].mode()[0] for col in df.select_dtypes(['object'])}, inplace=True)
+
+# Save cleaned data
+df.to_csv('/content/Lipstick.csv', index=False)
+print("\nCleaned data saved successfully!")
+
+25. data clean transform
+import pandas as pd
+
+file_path = '/content/Lipstick.csv'
+df = pd.read_csv(file_path)
+
+print("First 5 rows of the dataset:")
+print(df.head())
+
+print("\nDataset Info:")
+print(df.info())
+
+# Handle missing values
+# Fill missing numerical values with the column mean
+numerical_cols = df.select_dtypes(include=["float64", "int64"]).columns
+df[numerical_cols] = df[numerical_cols].fillna(df[numerical_cols].mean())
+
+# Fill missing categorical values with the most frequent value
+categorical_cols = df.select_dtypes(include=["object"]).columns
+df[categorical_cols] = df[categorical_cols].fillna(df[categorical_cols].mode().iloc[0])
+
+# Remove duplicates
+df = df.drop_duplicates()
+
+# Rename columns for clarity
+df.rename(columns=lambda x: x.strip().replace(" ", "_").lower(), inplace=True)
+
+# Save cleaned data to a new CSV file
+cleaned_file_path = "cleaned_sample_data.csv"
+df.to_csv(cleaned_file_path, index=False)
+
+# Final Output
+print("\nCleaned Dataset:")
+print(df.head())
+print(f"\nCleaned dataset saved to {cleaned_file_path}")
