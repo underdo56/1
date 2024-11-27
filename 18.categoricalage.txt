@@ -1,0 +1,18 @@
+import pandas as pd
+
+file_path = '/content/House Data.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Preview:")
+print(df.head())
+
+categorical_variable = 'Age_Group'  
+quantitative_variable = 'Income'  
+
+if categorical_variable in df.columns and quantitative_variable in df.columns:
+    grouped_stats = df.groupby(categorical_variable)[quantitative_variable].agg(['mean', 'median', 'min', 'max', 'std'])
+
+    print(f"\nSummary statistics of {quantitative_variable} grouped by {categorical_variable}:")
+    print(grouped_stats)
+else:
+    print(f"Error: Column names {categorical_variable} or {quantitative_variable} not found in the dataset.")

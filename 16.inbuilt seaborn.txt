@@ -1,0 +1,17 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = sns.load_dataset('titanic')
+
+if 'fare' in df.columns:
+    plt.figure(figsize=(10, 6))
+
+    sns.histplot(data=df, x='fare', kde=True, bins=30, color='skyblue', edgecolor='black')
+
+    plt.title('Distribution of Ticket Fare on Titanic (with Trend Line)', fontsize=16)
+    plt.xlabel('Fare', fontsize=14)
+    plt.ylabel('Frequency', fontsize=14)
+    plt.grid(axis='y', alpha=0.75)
+    plt.show()
+else:
+    print("'fare' column not found in the dataset.")

@@ -1,0 +1,23 @@
+import pandas as pd
+
+file_path = '/content/Covid Vaccine Statewise.csv'
+df = pd.read_csv(file_path)
+
+print("Dataset Description:")
+print(df.describe(include='all'))
+print("\nDataset Info:")
+print(df.info())
+
+if 'State' in df.columns and 'First Dose Administered' in df.columns:
+    first_dose_statewise = df.groupby('State')['First Dose Administered'].sum()
+    print("\nNumber of persons state-wise vaccinated for the first dose:")
+    print(first_dose_statewise)
+else:
+    print("\nColumns 'State' or 'First Dose Administered' not found in the dataset.")
+
+if 'State' in df.columns and 'Second Dose Administered' in df.columns:
+    second_dose_statewise = df.groupby('State')['Second Dose Administered'].sum()
+    print("\nNumber of persons state-wise vaccinated for the second dose:")
+    print(second_dose_statewise)
+else:
+    print("\nColumns 'State' or 'Second Dose Administered' not found in the dataset.")

@@ -1,0 +1,24 @@
+import pandas as pd
+
+file_path = '/content/Titanic.csv'
+titanic_data = pd.read_csv(file_path)
+
+selected_data = titanic_data.loc[0:4,['Name','Age']]
+print("selected data:")
+print(selected_data)
+
+
+sorted_data = titanic_data.sort_values(by='Fare',ascending=True)
+print("sorted data:")
+print(sorted_data)
+
+
+data_description = titanic_data.describe(include='all')
+print(" data description:")
+print(data_description)
+
+
+data_types = titanic_data.dtypes
+print(" datatypes:")
+print(data_types)
+
