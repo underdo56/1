@@ -1,72 +1,82 @@
 package prac;
+import java.util.*;
+public class SymTab {
 
-public class prac1 {
+	public static void main(String[] args) {
+		String[][] a = {
+	            {"", "START", "100", ""},
+	            {"", "READ", "A", ""},
+	            {"", "READ", "B", ""},
+	            {"", "MOVER", "AREG", "=50"},
+	            {"", "MOVER", "BREG", "=60"},
+	            {"", "ADD", "AREG", "BREG"},
+	            {"LOOP", "MOVER", "CREG", "A"},
+	            {"", "ADD", "CREG", "=10"},
+	            {"", "COMP", "CREG", "B"},
+	            {"", "BC", "LT", "LOOP"},
+	            {"NEXT", "SUB", "AREG", "=10"},
+	            {"", "COMP", "AREG", "B"},
+	            {"", "BC", "GT", "NEXT"},
+	            {"", "STOP", "", ""},
+	            {"A", "DS", "1", ""},
+	            {"B", "DS", "1", ""},
+	            {"END", "", "", ""}
+	        };
+		int lc=Integer.parseInt(a[0][2]);
+		int cnt=0;
+		int l;
+		String st[][]=new String [5][3];
+		for(int i=1;i<a.length-1;i++) {
+			if(a[i][0]!="") {
+				st[cnt][0]=a[i][0];
+				st[cnt][1]=Integer.toString(lc);
+				
+				if(a[i][1]=="DS") {
+					l=Integer.parseInt(a[i][2]);
+					st[cnt][2]=Integer.toString(l);
+					lc=lc+l;
+					
+				}else {
+					st[cnt][2]="1";
+					lc++;
+				}cnt++;
+			}else {
+				lc++;
+			}
+		}System.out.println("SYMBOL\t\tADDRESS\t\tLENGTH\n");
+		for(int i=0;i<cnt;i++) {
+			System.out.println(st[i][0]+"\t\t"+st[i][1]+"\t\t"+st[i][2]);
+		}
+		
 
-    public static void main(String[] args) {
-
-    	 String[][] a = {
-    	            {"", "START", "100", ""},
-    	            {"", "READ", "A", ""},
-    	            {"", "READ", "B", ""},
-    	            {"", "MOVER", "AREG", "=50"},
-    	            {"", "MOVER", "BREG", "=60"},
-    	            {"", "ADD", "AREG", "BREG"},
-    	            {"LOOP", "MOVER", "CREG", "A"},
-    	            {"", "ADD", "CREG", "=10"},
-    	            {"", "COMP", "CREG", "B"},
-    	            {"", "BC", "LT", "LOOP"},
-    	            {"NEXT", "SUB", "AREG", "=10"},
-    	            {"", "COMP", "AREG", "B"},
-    	            {"", "BC", "GT", "NEXT"},
-    	            {"", "STOP", "", ""},
-    	            {"A", "DS", "1", ""},
-    	            {"B", "DS", "1", ""},
-    	            {"END", "", "", ""}
-    	        };
-
-        int lc = Integer.parseInt(a[0][2]); 
-        int l;
-        int[][] lcTracker = new int[a.length][1]; 
-
-        // First pass to simulate instruction addressing
-        for (int i = 1; i <a.length; i++) {
-            lcTracker[i][0] = lc;
-            if (a[i][1]=="DS") {
-                l=Integer.parseInt(a[i][2]);
-                lc=lc+l;
-            } else {
-                lc++;
-            }
-        }
-
-        // Second pass to collect unique literals
-        String[][] lt = new String[10][2];
-        int cnt = 0;
-
-        for (int i = 1; i <a.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (a[i][j] != null && a[i][j].startsWith("=")) {
-                    boolean exists = false;
-                    for (int k = 0; k < cnt; k++) {
-                        if (lt[k][0]==(a[i][j])) {
-                            exists = true;
-                            break;
-                        }
-                    }
-                    if (!exists) {
-                        lt[cnt][0] = a[i][j];
-                        lt[cnt][1] = Integer.toString(lc);
+		String lt[][]=new String[10][2];
+		int ltcnt=0;
+		for(int i=0;i<a.length;i++) {
+			if(a[i][3].startsWith("=")) {
+				boolean exists=false;
+				for(int j=0;j<ltcnt;j++) {
+					if(lt[j][0]==a[i][3]) {
+						exists=true;
+						break;
+					}
+				}if(!exists) {
+					lt[ltcnt][0]=a[i][3];
+					lt[ltcnt][1]=null;
+					ltcnt++;
+				}
+			}if(a[i][0]=="LTORG"||a[i][0]=="END") {
+				for (int j = 0; j < ltcnt; j++) {
+                    if (lt[j][1] == null) {
+                        lt[j][1] = Integer.toString(lc);
                         lc++;
-                        cnt++;
                     }
                 }
-            }
-        }
+			}
+		}System.out.println("LITERAL\t\tADDRESS\n");
+		for(int i=0;i<ltcnt;i++) {
+			System.out.println(lt[i][0]+"\t\t"+lt[i][1]);
+		}
 
-        // Print Literal Table
-        System.out.println("LITERAL\t\tADDRESS");
-        for (int i = 0; i < cnt; i++) {
-            System.out.println(lt[i][0] + "\t\t" + lt[i][1]);
-        }
-    }
+	}
+
 }
