@@ -20,10 +20,7 @@ public class prac1 {
 
         Map<String, String> MOT = new HashMap<>();
         Map<String, Integer> regCode = new HashMap<>();
-        Map<String, Integer> symbolTable = new LinkedHashMap<>();
-        
 
-        
         MOT.put("STOP", "(IS,00)");
         MOT.put("ADD", "(IS,01)");
         MOT.put("SUB", "(IS,02)");
@@ -47,7 +44,7 @@ public class prac1 {
         regCode.put("CREG", 3);
 
         int lc = 0;
-     
+
         for (int i = 0; i < a.length; i++) {
             String label = a[i][0];
             String op = a[i][1];
@@ -60,24 +57,19 @@ public class prac1 {
                 continue;
             }
 
-            if (label.equals("END") || label.equals("LTORG")) {
-                
-                if (label.equals("END")) {
-                    System.out.println("(AD,02)");
-                    break;
-                }
-                System.out.println("(AD,05)");
-                continue;
-            }
-
-            if (!label.isEmpty() && !MOT.containsKey(label)) {
-                symbolTable.put(label, lc);
+            if (label.equals("END")) {
+                System.out.println("(AD,02)");
+                break;
             }
 
             if (op.equals("DS")) {
-                symbolTable.put(label, lc);
                 System.out.println("(DL,02) (C," + op1 + ")");
                 lc += Integer.parseInt(op1);
+                continue;
+            }
+
+            if (!MOT.containsKey(op)) {
+                lc++;
                 continue;
             }
 
@@ -88,10 +80,8 @@ public class prac1 {
                 System.out.print(regCode.get(op1) + " ");
             } else if (!op1.isEmpty()) {
                 if (op1.startsWith("=")) {
-                    
                     System.out.print("(L," + op1 + ") ");
                 } else {
-                    
                     System.out.print("(S," + op1 + ") ");
                 }
             }
@@ -99,10 +89,8 @@ public class prac1 {
             // Operand 2
             if (!op2.isEmpty()) {
                 if (op2.startsWith("=")) {
-                    
                     System.out.print("(L," + op2 + ")");
                 } else {
-                   
                     System.out.print("(S," + op2 + ")");
                 }
             }
@@ -111,6 +99,4 @@ public class prac1 {
             lc++;
         }
     }
-
-   
 }
