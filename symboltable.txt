@@ -1,0 +1,51 @@
+
+package prac;
+
+import java.util.*;
+public class prac1 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		
+		String a[][]= {
+				{"","START","100",""},
+				{"","READ","A",""},
+				{"","READ","B",""},
+				{"LOOP","MOVER","AREG","A"},
+				{"","MOVER","BREG","B"},
+				{"","COMP","BREG","=2"},
+				{"","BC","GT","BACK"},
+				{"BACK","SUB","AREG","B"},
+				{"","COMP","AREG","=5"},
+				{"","BC","LT","BACK"},
+				{"","STOP","",""},
+				{"A","DS","1",""},
+				{"B","DS","1",""},
+				{"END","","",""}
+				
+		};
+		int lc=Integer.parseInt(a[0][2]);
+		String st[][]=new String[5][2];
+		int cnt=0,l;
+		for(int i=1;i<13;i++) {
+			if(a[i][0]!="") {
+				st[cnt][0]=a[i][0];
+				st[cnt][1]=Integer.toString(lc);
+				cnt++;
+				if(a[i][1]=="DS") {
+					l=Integer.parseInt(a[i][2]);
+					lc=lc+l;
+				}else {
+					lc++;
+				}
+			}else {
+				lc++;
+			}
+		}System.out.println("SYMBOL\t\tADDRESS\n");
+		for(int i=0;i<4;i++) {
+			System.out.println(st[i][0]+"\t\t"+st[i][1]);
+		}
+	}
+
+}

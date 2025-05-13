@@ -1,0 +1,72 @@
+%{
+#include "y.tab.h"
+#include <string.h>
+#include <stdlib.h>
+%}
+
+%%
+
+[a-zA-Z]+     { yylval.str = strdup(yytext); return WORD; }
+\n            { return '\n'; }
+.             { return INVALID; }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+  code.y->
+
+
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int yylex(void);
+int yyerror(char *s);
+
+%}
+
+%union {
+    char* str;
+}
+
+%token <str> WORD
+%token INVALID
+
+%%
+
+input:
+    WORD '\n' {
+        printf("Converted: ");
+        for (int i = 0; i < strlen($1); ++i) {
+            if (islower($1[i]))
+                printf("%c", toupper($1[i]));
+            else if (isupper($1[i]))
+                printf("%c", tolower($1[i]));
+            else
+                printf("%c", $1[i]);
+        }
+        printf("\n");
+        free($1);
+    }
+  | INVALID '\n' {
+        printf("Invalid input.\n");
+    }
+  ;
+
+%%
+
+int main() {
+    printf("Enter a word:\n");
+    yyparse();
+    return 0;
+}
+
+int yyerror(char *s) {
+    fprintf(stderr, "Syntax error: %s\n", s);
+    return 0;
+}

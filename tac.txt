@@ -1,0 +1,75 @@
+package prac;
+import java.util.*;
+
+public class prac1 {
+    static int temp = 1;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter expression (e.g., a = (b*b + c*c) * (p - q - r)): ");
+        String input = sc.nextLine().replaceAll(" ", "").replaceAll("[–−‒―]", "-");
+        
+        String[] parts = input.split("=");
+        if (parts.length != 2) {
+            System.out.println("Invalid input format. Use: variable = expression");
+            return;
+        }
+
+        String lhs = parts[0];
+        String rhs = parts[1];
+
+        List<String> postfix = toPostfix(rhs);
+        generateTAC(postfix, lhs);
+    }
+
+    static List<String> toPostfix(String expr) {
+        List<String> output = new ArrayList<>();
+        Stack<Character> stack = new Stack<>();
+
+        for (int i = 0; i < expr.length(); i++) {
+            char ch = expr.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                output.add(String.valueOf(ch));
+            } else if (ch == '(') {
+                stack.push(ch);
+            } else if (ch == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(')
+                    output.add(String.valueOf(stack.pop()));
+                if (!stack.isEmpty()) stack.pop(); // pop '('
+            } else {
+                while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(ch))
+                    output.add(String.valueOf(stack.pop()));
+                stack.push(ch);
+            }
+        }
+
+        while (!stack.isEmpty())
+            output.add(String.valueOf(stack.pop()));
+
+        return output;
+    }
+
+    static void generateTAC(List<String> postfix, String lhs) {
+        Stack<String> stack = new Stack<>();
+        for (String token : postfix) {
+            if ("+-*/^".contains(token)) {
+                String b = stack.pop(), a = stack.pop();
+                String t = "t" + temp++;
+                System.out.println(t + " = " + a + " " + token + " " + b);
+                stack.push(t);
+            } else {
+                stack.push(token);
+            }
+        }
+        System.out.println(lhs + " = " + stack.pop());
+    }
+
+    static int precedence(char op) {
+        switch (op) {
+            case '+': case '-': return 1;
+            case '*': case '/': return 2;
+            case '^': return 3;
+            default: return 0;
+        }
+    }
+}

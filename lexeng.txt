@@ -1,0 +1,39 @@
+tech@LAPTOP-CVTTF5OS:~$ nano pos_lexer.l
+tech@LAPTOP-CVTTF5OS:~$ flex -i pos_lexer.l
+tech@LAPTOP-CVTTF5OS:~$ gcc lex.yy.c -o pos_lexer
+tech@LAPTOP-CVTTF5OS:~$ ./pos_lexer
+
+
+%{
+#include <stdio.h>
+#include <string.h>
+%}
+
+%%
+"Hello"|"Hi"|"Hey"                                   { printf("GREETING\t\t%s\n", yytext); }
+"you"|"I"|"we"|"they"|"he"|"she"|"it"                     { printf("PRONOUN\t\t%s\n", yytext); }
+"am"|"is"|"are"|"was"|"were"|"be"|"being"|"been"     { printf("VERB\t\t%s\n", yytext); }
+"run"|"arrives"|"give"|"kill"|"imagines"             { printf("VERB\t\t%s\n", yytext); }
+"fine"|"good"|"bad"|"important"|"strong"             { printf("ADJECTIVE\t%s\n", yytext); }
+"destiny"|"thing"|"instinct"|"generation"            { printf("NOUN\t\t%s\n", yytext); }
+"thank"|"thanks"                                     { printf("NOUN\t\t%s\n", yytext); }
+"reason"|"gap"|"power"|"cigarette"                   { printf("NOUN\t\t%s\n", yytext); }
+"the"|"a"|"an"|"that"|"this"|"those"|"these"         { printf("ARTICLE\t\t%s\n", yytext); }
+"and"|"or"|"but"|"if"|"while"|"then"|"else"          { printf("CONJUNCTION\t%s\n", yytext); }
+"to"|"from"|"in"|"on"|"of"|"for"                     { printf("PREPOSITION\t%s\n", yytext); }
+"!"|"?"|"."|","|";"|":"                              { printf("PUNCTUATION\t%s\n", yytext); }
+[0-9]+                                               { printf("NUMBER\t\t%s\n", yytext); }
+[\x80-\xFF]+                                         { }
+[A-Za-z]+                                            { printf("WORD\t\t%s\n", yytext); }
+[ \t\n]+                                             {  }
+.                                                    { printf("UNKNOWN\t\t%s\n", yytext); }
+%%
+
+int main(int argc, char **argv) {
+    yylex();
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}

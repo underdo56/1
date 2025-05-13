@@ -1,0 +1,116 @@
+package prac;
+
+import java.util.*;
+
+public class prac1 {
+
+    public static void main(String[] args) {
+
+        String[][] a = {
+                {"", "START", "100", ""},
+                {"", "READ", "A", ""},
+                {"", "READ", "B", ""},
+                {"", "MOVER", "AREG", "A"},
+                {"", "SUB", "AREG", "B"},
+                {"", "STOP", "", ""},
+                {"A", "DS", "1", ""},
+                {"B", "DS", "1", ""},
+                {"END", "", "", ""}
+        };
+
+        Map<String, String> MOT = new HashMap<>();
+        Map<String, Integer> regCode = new HashMap<>();
+        Map<String, Integer> symbolTable = new LinkedHashMap<>();
+        
+
+        
+        MOT.put("STOP", "(IS,00)");
+        MOT.put("ADD", "(IS,01)");
+        MOT.put("SUB", "(IS,02)");
+        MOT.put("MULT", "(IS,03)");
+        MOT.put("MOVER", "(IS,04)");
+        MOT.put("MOVEM", "(IS,05)");
+        MOT.put("COMP", "(IS,06)");
+        MOT.put("BC", "(IS,07)");
+        MOT.put("READ", "(IS,08)");
+        MOT.put("PRINT", "(IS,09)");
+        MOT.put("START", "(AD,01)");
+        MOT.put("END", "(AD,02)");
+        MOT.put("ORIGIN", "(AD,03)");
+        MOT.put("EQU", "(AD,04)");
+        MOT.put("LTORG", "(AD,05)");
+        MOT.put("DC", "(DL,01)");
+        MOT.put("DS", "(DL,02)");
+
+        regCode.put("AREG", 1);
+        regCode.put("BREG", 2);
+        regCode.put("CREG", 3);
+
+        int lc = 0;
+     
+        for (int i = 0; i < a.length; i++) {
+            String label = a[i][0];
+            String op = a[i][1];
+            String op1 = a[i][2];
+            String op2 = a[i][3];
+
+            if (op.equals("START")) {
+                lc = Integer.parseInt(op1);
+                System.out.println("(AD,01) (C," + lc + ")");
+                continue;
+            }
+
+            if (label.equals("END") || label.equals("LTORG")) {
+                
+                if (label.equals("END")) {
+                    System.out.println("(AD,02)");
+                    break;
+                }
+                System.out.println("(AD,05)");
+                continue;
+            }
+
+            if (!label.isEmpty() && !MOT.containsKey(label)) {
+                symbolTable.put(label, lc);
+            }
+
+            if (op.equals("DS")) {
+                symbolTable.put(label, lc);
+                System.out.println("(DL,02) (C," + op1 + ")");
+                lc += Integer.parseInt(op1);
+                continue;
+            }
+
+            System.out.print(MOT.get(op) + " ");
+
+            // Operand 1
+            if (regCode.containsKey(op1)) {
+                System.out.print(regCode.get(op1) + " ");
+            } else if (!op1.isEmpty()) {
+                if (op1.startsWith("=")) {
+                    
+                    System.out.print("(L," + op1 + ") ");
+                } else {
+                    
+                    System.out.print("(S," + op1 + ") ");
+                }
+            }
+
+            // Operand 2
+            if (!op2.isEmpty()) {
+                if (op2.startsWith("=")) {
+                    
+                    System.out.print("(L," + op2 + ")");
+                } else {
+                   
+                    System.out.print("(S," + op2 + ")");
+                }
+            }
+
+            System.out.println();
+            lc++;
+        }
+    }
+
+   
+}

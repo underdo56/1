@@ -1,0 +1,73 @@
+package prac;
+
+public class prac1 {
+
+    public static void main(String[] args) {
+
+        String[][] a = {
+                {"", "START", "100", ""},
+                {"", "READ", "A", ""},
+                {"", "MOVER", "AREG", "=1"},
+                {"", "MOVEM", "BREG", "=6"},
+                {"", "ADD", "AREG", "BREG"},
+                {"", "COMP", "AREG", "A"},
+                {"", "BC", "GT", "LAST"},
+                {"LTORG", "", "", ""},
+                {"NEXT", "SUB", "AREG", "=1"},
+                {"", "MOVER", "CREG", "B"},
+                {"", "ADD", "CREG", "=8"},
+                {"", "MOVEM", "CREG", "B"},
+                {"", "PRINT", "B", ""},
+                {"LAST", "STOP", "", ""},
+                {"A", "DS", "1", ""},
+                {"B", "DS", "1", ""},
+                {"END", "", "", ""}
+        };
+
+        String[] literals = new String[10];
+        boolean[] assigned = new boolean[10];
+        int cnt = 0;
+        int[] pt = new int[10];
+        int poolCount = 0;
+
+        pt[poolCount++] = 1; 
+
+        for (int i = 1; i < a.length; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (a[i][j] != null && a[i][j].startsWith("=")) {
+                    boolean exists = false;
+                    for (int k = 0; k < cnt; k++) {
+                        if (literals[k]==(a[i][j])) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        literals[cnt++] = a[i][j];
+                    }
+                }
+            }
+
+            
+            if (a[i][0].equals("LTORG") || a[i][0].equals("END")) {
+                boolean newPool = false;
+                for (int k = 0; k < cnt; k++) {
+                    if (!assigned[k]) {
+                        assigned[k] = true;
+                        newPool = true;
+                    }
+                }
+                
+                if (newPool && i != a.length - 1) {
+                    pt[poolCount++] =cnt + 1;
+                }
+            }
+        }
+
+        
+        System.out.println("POOL TABLE:");
+        for (int i = 0; i < poolCount; i++) {
+            System.out.println(pt[i]);
+        }
+    }
+}

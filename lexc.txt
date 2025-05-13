@@ -1,0 +1,35 @@
+tech@LAPTOP-CVTTF5OS:~$ nano c_lexer.l
+tech@LAPTOP-CVTTF5OS:~$ flex c_lexer.l
+tech@LAPTOP-CVTTF5OS:~$ gcc lex.yy.c -o c_lexer
+tech@LAPTOP-CVTTF5OS:~$ ./c_lexer
+
+%{
+#include <stdio.h>
+#include <string.h>
+%}
+
+%%
+"int"|"float"|"char"|"double"|"void"      { printf("%-16s\t%s\n", "KEYWORD", yytext); }
+"="                                       { printf("%-16s\t%s\n", "ASSIGNMENT_OP", yytext); }
+"("                                       { printf("%-16s\t%s\n", "LPAREN", yytext); }
+")"                                       { printf("%-16s\t%s\n", "RPAREN", yytext); }
+"{"                                       { printf("%-16s\t%s\n", "LBRACE", yytext); }
+"}"                                       { printf("%-16s\t%s\n", "RBRACE", yytext); }
+";"                                       { printf("%-16s\t%s\n", "SEMICOLON", yytext); }
+","                                       { printf("%-16s\t%s\n", "COMMA", yytext); }
+"+"|"-"|"*"|"/"                           { printf("%-16s\t%s\n", "ARITH_OP", yytext); }
+[0-9]+                                    { printf("%-16s\t%s\n", "NUMBER", yytext); }
+\"([^\\\"]|\\.)*\"                        { printf("%-16s\t%s\n", "STRING_LITERAL", yytext); }
+[a-zA-Z_][a-zA-Z0-9_]*                    { printf("%-16s\t%s\n", "IDENTIFIER", yytext); }
+[ \t\n\r]+                                { /* skip whitespace */ }
+.                                         { printf("%-16s\t%s\n", "UNKNOWN", yytext); }
+%%
+
+int main(int argc, char **argv) {
+    yylex();
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}

@@ -1,0 +1,82 @@
+code.l->
+
+%{
+#include "y.tab.h"
+#include <stdio.h>
+%}
+
+%% 
+
+[0-9]+\.[0-9]+      { yylval.fval = atof(yytext); return FLOAT; }
+[0-9]+              { yylval.fval = atof(yytext); return FLOAT; }
+
+"+"                 { return '+'; }
+"-"                 { return '-'; }
+"*"                 { return '*'; }
+"/"                 { return '/'; }
+"("                 { return '('; }
+")"                 { return ')'; }
+
+[ \t\n]+            ; // Ignore whitespaces
+
+.                   { printf("Unknown character: %s\n", yytext); }
+
+%% 
+
+
+
+int yywrap() {
+    return 1;
+}
+
+
+code.y->
+
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+// Declare yylex and yyerror to fix warnings
+int yylex(void);
+int yyerror(char *s);
+%}
+
+%union {
+    double fval;
+}
+
+%token <fval> FLOAT
+%type  <fval> expr input
+
+%left '+' '-'
+%left '*' '/'
+%right UMINUS
+
+%%
+
+input:
+    expr { printf("Result: %.2f\n", $1); }
+    ;
+
+expr:
+    expr '+' expr        { $$ = $1 + $3; }
+  | expr '-' expr        { $$ = $1 - $3; }
+  | expr '*' expr        { $$ = $1 * $3; }
+  | expr '/' expr        { $$ = $1 / $3; }
+  | '-' expr %prec UMINUS { $$ = -$2; }
+  | '(' expr ')'         { $$ = $2; }
+  | FLOAT                { $$ = $1; }
+  ;
+
+%%
+
+int main() {
+    printf("Enter expression:\n");
+    yyparse();
+    return 0;
+}
+
+int yyerror(char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+    return 0;
+}
