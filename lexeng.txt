@@ -1,8 +1,7 @@
-tech@LAPTOP-CVTTF5OS:~$ nano pos_lexer.l
-tech@LAPTOP-CVTTF5OS:~$ flex -i pos_lexer.l
-tech@LAPTOP-CVTTF5OS:~$ gcc lex.yy.c -o pos_lexer
-tech@LAPTOP-CVTTF5OS:~$ ./pos_lexer
-
+tech@LAPTOP-CVTTF5OS:~$ nano file.l
+tech@LAPTOP-CVTTF5OS:~$ lex file.l
+tech@LAPTOP-CVTTF5OS:~$ gcc lex.yy.c
+tech@LAPTOP-CVTTF5OS:~$ ./a.out
 
 %{
 #include <stdio.h>
