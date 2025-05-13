@@ -1,3 +1,11 @@
+tech@LAPTOP-CVTTF5OS:~$ nano yaccexp.l
+tech@LAPTOP-CVTTF5OS:~$ lex yaccexp.l
+tech@LAPTOP-CVTTF5OS:~$ nano yaccexp.y
+tech@LAPTOP-CVTTF5OS:~$ yacc -d yaccexp.y
+tech@LAPTOP-CVTTF5OS:~$ gcc lex.yy.c y.tab.c -o yaccexp
+tech@LAPTOP-CVTTF5OS:~$ ./yaccexp
+
+
 code.l->
 
 %{
