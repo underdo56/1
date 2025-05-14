@@ -1,3 +1,13 @@
+nano file.l
+lex file.l
+nano file.y
+yacc -d file.y
+gcc lex.yy.c y.tab.c
+./a.out
+
+
+code.l _>
+
 %{
 #include "y.tab.h"
 %}
